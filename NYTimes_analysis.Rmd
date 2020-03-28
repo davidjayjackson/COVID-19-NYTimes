@@ -16,15 +16,31 @@ library(plotly)
 * GitHub: https://github.com/nytimes/covid-19-data.git
 
 ```{r}
+rm(list=ls())
 us_states <- read_csv("./DATA/us-states.csv")
+
+states_LTC <- us_states %>% filter(cases <=mean(cases))
+tates_GTC <- us_states %>% filter(cases >=mean(cases))
+states_LTD <- us_states %>% filter(cases <=mean(deaths))
+tates_GTD <- us_states %>% filter(cases >=mean(deaths))
+
 us_counties <- read_csv("./DATA/us-counties.csv")
+
+counties_LTC <- us_counties %>% filter(cases <=mean(cases))
+countries_GTC <- us_counties %>% filter(cases >=mean(cases))
+states_LTD <- us_states %>% filter(cases <=mean(deaths))
+states_GTD <- us_states %>% filter(cases >=mean(deaths))
+
+
+
+
 ```
 
-#### Summary of US States Data
+#### Summary of US States Total cases and Deaths
 
 
 ```{r}
-us_states %>% ggplot() + geom_col(aes(x=state,y=cases)) +
+us_states %>% ggplot() + geom_col(aes(x=reorder(state,cases),y=cases)) +
   coord_flip() +
   labs(title="Summary Cases by State")
 
@@ -70,5 +86,9 @@ ohio_counties %>% ggplot() + geom_col(aes(x=date,y=cases,col=county)) +
 
 ohio_counties %>% ggplot() + geom_line(aes(x=date,y=deaths,col=county)) +
   labs(title="Ohio/County Daily Deaths Summary by State")
+```
+```{r}
+us_states %>% ggplot() + geom_point(aes(x=cases,y=deaths)) +
+  geom_smooth(aes(x=cases,y=deaths))
 ```
 
