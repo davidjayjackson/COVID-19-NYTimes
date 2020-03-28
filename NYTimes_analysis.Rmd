@@ -1,0 +1,74 @@
+---
+title: "NY Times COVID-19 Analysis"
+author: "David J Jackson"
+date: "3/28/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(RSQLite)
+library(plotly)
+```
+
+## NY Times US States Data Analysis
+* GitHub: https://github.com/nytimes/covid-19-data.git
+
+```{r}
+us_states <- read_csv("./DATA/us-states.csv")
+us_counties <- read_csv("./DATA/us-counties.csv")
+```
+
+#### Summary of US States Data
+
+
+```{r}
+us_states %>% ggplot() + geom_col(aes(x=state,y=cases)) +
+  coord_flip() +
+  labs(title="Summary Cases by State")
+
+us_states %>% ggplot() + geom_col(aes(x=state,y=deaths)) +
+  labs(title="Summary of Deaths  by State") + coord_flip() 
+```
+
+```{r}
+us_states %>% ggplot() + geom_col(aes(x=date,y=cases,col=state)) +
+  labs(title="Daily Cases Summary by Date")
+
+us_states %>% ggplot() + geom_line(aes(x=date,y=cases,col=state)) +
+  labs(title="Daily Cases Summary by State")
+```
+
+#### Summary of States  Cases and Deaths
+
+```{r}
+us_states %>% ggplot() + geom_line(aes(x=date,y=cases,col=state)) +
+  labs(title="Daily Cases Summary by Date")
+
+us_states %>% ggplot() + geom_line(aes(x=date,y=deaths,col=state)) +
+  labs(title="Daily Deaths Summary by State")
+```
+```{r}
+us_states %>% plot_ly() %>% add_lines(x=~date,y=~cases)
+```
+
+#### Summary of Ohio Deaths and Cases
+
+```{r}
+
+ohio_counties <- us_counties %>% filter(state=="Ohio")
+ohio_counties %>% ggplot() + geom_col(aes(x=date,y=cases)) +
+  labs(title="Ohio Daily Cases Summary by Date")
+
+ohio_counties %>% ggplot() + geom_col(aes(x=date,y=deaths)) +
+  labs(title="Ohio Daily Deaths Summary by Date")
+
+
+ohio_counties %>% ggplot() + geom_col(aes(x=date,y=cases,col=county)) +
+  labs(title="Ohio/county Daily Cases Summary by Date")
+
+ohio_counties %>% ggplot() + geom_line(aes(x=date,y=deaths,col=county)) +
+  labs(title="Ohio/County Daily Deaths Summary by State")
+```
+
