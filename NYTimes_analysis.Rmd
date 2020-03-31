@@ -1,5 +1,5 @@
 ---
-title: "NY Times COVID-19 Analysis"
+title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
 date: "3/28/2020"
 output: html_document
@@ -7,6 +7,7 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(fig.width=9, fig.height=6)
 library(tidyverse)
 library(RSQLite)
 library(plotly)
@@ -15,23 +16,22 @@ library(plotly)
 ## NY Times US States Data Analysis
 * GitHub: https://github.com/nytimes/covid-19-data.git
 
-```{r}
+
+```{r, echo=FALSE}
 rm(list=ls())
 us_states <- read_csv("./DATA/us-states.csv")
 
-states_LTC <- us_states %>% filter(cases <=344)
-states_GTC <- us_states %>% filter(cases >=344)
-states_LTD <- us_states %>% filter(deaths <=15.5)
-tates_GTD <- us_states %>% filter(deaths >=15.5)
+us_total <- us_states %>% group_by(date) %>% summarise(Cases=sum(cases),                                                        Deaths = sum(deaths),                                                     DeathRate = Cases/Deaths)
 
+us_state_total <- us_states %>% group_by(state,date) %>% summarise(Cases=sum(cases),                                                        Deaths = sum(deaths),                                                     DeathRate = Cases/Deaths)
+
+```
+```{r,echo=FALSE}
 us_counties <- read_csv("./DATA/us-counties.csv")
+us_county_summary <- us_counties %>% group_by(state,county,date) %>% summarise(Cases=sum(cases),                                                        Deaths = sum(deaths),DeathRate = Cases/Deaths)
 
-counties_LTC <- us_counties %>% filter(cases <=30.18)
-countries_GTC <- us_counties %>% filter(cases >=30.18)
-states_LTD <- us_counties %>% filter(deaths <=4)
-states_GTD <- us_counties %>% filter(deaths >=4)
-
-
+```
+```{r,echo=FALSE}
 db <- dbConnect(SQLite(), dbname="../db/CORVID.sqlite3")
 us_states$date <- as.character(us_states$date)
 dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
@@ -39,65 +39,51 @@ dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
 us_counties$date <- as.character(us_counties$date)
 dbWriteTable(db, "us_counties",us_counties ,overwrite=TRUE)
 dbListTables(db)
+dbDisconnect(db)
 
 ```
 
-#### Summary of US States Total cases and Deaths
+#### Summary of Cases and Deaths by Date
 
+```{r,echo=FALSE}
+us_total %>% plot_ly() %>% add_lines(x=~date,y=~Cases) %>%
+  layout(title="US Daily Summary of Cases")
 
-```{r}
-states_LTC %>% ggplot() + geom_col(aes(x=reorder(state,cases),y=cases)) +
-  coord_flip() +
-  labs(title="Summary Cases by State",subtitle="(Number of cases <=344)")
+us_total %>% plot_ly() %>% add_lines(x=~date,y=~Deaths) %>%
+  layout(title="US Daily Summary of Deaths")
 
-states_GTC %>% ggplot() + geom_col(aes(x=state,y=deaths)) +
-  labs(title="Summary of Deaths  by State",subtitle="(Number of cases >=344)") + coord_flip() 
+us_total %>% plot_ly() %>% add_lines(x=~date,y=~DeathRate) %>%
+  layout(title="US Daily Rate of Death")
 ```
 
-```{r}
-us_states %>% ggplot() + geom_col(aes(x=date,y=cases,col=state)) +
-  labs(title="Daily Cases Summary by Date")
+#### Summary of Cases and Deaths by State
 
-us_states %>% ggplot() + geom_line(aes(x=date,y=cases,col=state)) +
-  labs(title="Daily Cases Summary by State")
-```
+```{r,echo=FALSE}
+us_state_total %>% ggplot() + geom_col(aes(x=date,y=Cases,fill=state)) +
+  labs(title="Daily Cases Summary by Date") 
 
-#### Summary of States  Cases and Deaths
+us_state_total %>% ggplot() + geom_col(aes(x=date,y=Deaths,fill=state)) +
+  labs(title="Daily Deaths Summary by State") 
 
-```{r}
-us_states %>% ggplot() + geom_line(aes(x=date,y=cases,col=state)) +
-  labs(title="Daily Cases Summary by Date")
 
-us_states %>% ggplot() + geom_line(aes(x=date,y=deaths,col=state)) +
-  labs(title="Daily Deaths Summary by State")
-```
-```{r}
-us_states %>% plot_ly() %>% add_lines(x=~date,y=~cases)
 ```
 
 #### Summary of Ohio Deaths and Cases
 
-```{r}
+```{r,echo=FALSE}
 
-ohio_counties <- us_counties %>% filter(state=="Ohio")
-ohio_counties %>% ggplot() + geom_col(aes(x=date,y=cases)) +
+ohio_counties <- us_county_summary %>% filter(state=="Ohio")
+ohio_counties %>% ggplot() + geom_col(aes(x=date,y=Cases)) +
   labs(title="Ohio Daily Cases Summary by Date")
 
-ohio_counties %>% ggplot() + geom_col(aes(x=date,y=deaths)) +
+ohio_counties %>% ggplot() + geom_col(aes(x=date,y=Deaths)) +
   labs(title="Ohio Daily Deaths Summary by Date")
 
-
-ohio_counties %>% ggplot() + geom_col(aes(x=date,y=cases,col=county)) +
+```
+```{r,echo=FALSE}
+ohio_counties %>% ggplot() + geom_col(aes(x=date,y=Cases,fill=county)) +
   labs(title="Ohio/county Daily Cases Summary by Date")
 
-ohio_counties %>% ggplot() + geom_line(aes(x=date,y=deaths,col=county)) +
-  labs(title="Ohio/County Daily Deaths Summary by State")
+ohio_counties %>% ggplot() + geom_col(aes(x=date,y=Deaths,fill=county)) +
+  labs(title="Ohio/County Daily Deaths Summary by C")
 ```
-```{r}
-us_states %>% ggplot() + geom_point(aes(x=cases,y=deaths)) +
-  geom_smooth(aes(x=cases,y=deaths))
-```
-```{r}
-dbDisconnect(db)
-```
-
