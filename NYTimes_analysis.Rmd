@@ -19,20 +19,26 @@ library(plotly)
 rm(list=ls())
 us_states <- read_csv("./DATA/us-states.csv")
 
-states_LTC <- us_states %>% filter(cases <=mean(cases))
-tates_GTC <- us_states %>% filter(cases >=mean(cases))
-states_LTD <- us_states %>% filter(cases <=mean(deaths))
-tates_GTD <- us_states %>% filter(cases >=mean(deaths))
+states_LTC <- us_states %>% filter(cases <=344)
+states_GTC <- us_states %>% filter(cases >=344)
+states_LTD <- us_states %>% filter(deaths <=15.5)
+tates_GTD <- us_states %>% filter(deaths >=15.5)
 
 us_counties <- read_csv("./DATA/us-counties.csv")
 
-counties_LTC <- us_counties %>% filter(cases <=mean(cases))
-countries_GTC <- us_counties %>% filter(cases >=mean(cases))
-states_LTD <- us_states %>% filter(cases <=mean(deaths))
-states_GTD <- us_states %>% filter(cases >=mean(deaths))
+counties_LTC <- us_counties %>% filter(cases <=30.18)
+countries_GTC <- us_counties %>% filter(cases >=30.18)
+states_LTD <- us_counties %>% filter(deaths <=4)
+states_GTD <- us_counties %>% filter(deaths >=4)
 
 
+db <- dbConnect(SQLite(), dbname="../db/CORVID.sqlite3")
+us_states$date <- as.character(us_states$date)
+dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
 
+us_counties$date <- as.character(us_counties$date)
+dbWriteTable(db, "us_counties",us_counties ,overwrite=TRUE)
+dbListTables(db)
 
 ```
 
@@ -40,12 +46,12 @@ states_GTD <- us_states %>% filter(cases >=mean(deaths))
 
 
 ```{r}
-us_states %>% ggplot() + geom_col(aes(x=reorder(state,cases),y=cases)) +
+states_LTC %>% ggplot() + geom_col(aes(x=reorder(state,cases),y=cases)) +
   coord_flip() +
-  labs(title="Summary Cases by State")
+  labs(title="Summary Cases by State",subtitle="(Number of cases <=344)")
 
-us_states %>% ggplot() + geom_col(aes(x=state,y=deaths)) +
-  labs(title="Summary of Deaths  by State") + coord_flip() 
+states_GTC %>% ggplot() + geom_col(aes(x=state,y=deaths)) +
+  labs(title="Summary of Deaths  by State",subtitle="(Number of cases >=344)") + coord_flip() 
 ```
 
 ```{r}
@@ -90,5 +96,8 @@ ohio_counties %>% ggplot() + geom_line(aes(x=date,y=deaths,col=county)) +
 ```{r}
 us_states %>% ggplot() + geom_point(aes(x=cases,y=deaths)) +
   geom_smooth(aes(x=cases,y=deaths))
+```
+```{r}
+dbDisconnect(db)
 ```
 
