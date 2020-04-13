@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "3/28/2020"
+date: "Apr. 13, 2020 03:25 PM/EDT"
 output: html_document
 ---
 
@@ -22,7 +22,7 @@ rm(list=ls())
 us_states <- data.table::fread("../NYT_covid-19-data/us-states.csv")
 
 us_total <- us_states %>% group_by(date) %>% 
-summarise(Cases=sum(cases),                                                        Deaths = sum(deaths),                                                                   DeathRate = Deaths/Cases)
+summarise(Cases=sum(cases), Deaths = sum(deaths),                                                                   DeathRate = Deaths/Cases)
 
 us_state_total <- us_states %>% group_by(state,date) %>% 
   summarise(Cases=sum(cases),                                                             Deaths = sum(deaths),                                                    
@@ -35,7 +35,7 @@ us_county_summary <- us_counties %>% group_by(state,county,date) %>% summarise(C
 
 ```
 ```{r,echo=FALSE}
-db <- dbConnect(SQLite(), dbname="../db/CORVID.sqlite3")
+db <- dbConnect(SQLite(), dbname="../COVIDDB/CORVID.sqlite3")
 us_states$date <- as.character(us_states$date)
 dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
 
