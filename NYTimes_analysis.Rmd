@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "Apr. 16, 2020 06:20PM/EDT"
+date: "Apr. 17, 2020 01:55 PM/EDT"
 output: html_document
 ---
 
