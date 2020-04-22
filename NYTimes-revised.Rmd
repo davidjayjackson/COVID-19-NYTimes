@@ -1,0 +1,65 @@
+---
+title: "Revised NYTime Update"
+author: "David J Jackson"
+date: "4/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(RSQLite)
+library(plotly)
+```
+
+## NY Times US States Data Analysis
+* GitHub: https://github.com/nytimes/covid-19-data.git
+
+
+```{r, echo=FALSE}
+rm(list=ls())
+us_states <- data.table::fread("../COVID-19-NYTData/us-states.csv")
+us_states$date <- as.Date(us_states$date)
+
+
+```
+```{r,echo=FALSE}
+us_counties <- data.table::fread("../COVID-19-NYTData/us-counties.csv")
+us_counties$date <- as.Date(us_counties$date)
+
+```
+
+```{r}
+# dplyr Thanks to Tyler Grant Smith @ Slack
+
+
+states_daily <- us_states %>% group_by(state,date) %>% 
+              summarise(
+              inc_deaths = deaths - lag(deaths),
+              inc_cases = cases - lag(cases))
+
+```
+```{r}
+# dplyr Thanks to Tyler Grant Smith @ Slack
+us_counties$date <- as.Date(us_counties$date)
+
+us_counties <- us_counties %>% mutate(inc_deaths = deaths - lag(deaths))
+us_counties<- us_counties %>% mutate(inc_cases = cases - lag(cases))
+
+```
+```{r,echo=FALSE}
+db <- dbConnect(SQLite(), dbname="../COVIDDB/CORVID.sqlite3")
+us_states$date <- as.character(us_states$date)
+dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
+
+us_counties$date <- as.character(us_counties$date)
+dbWriteTable(db, "us_counties",us_counties ,overwrite=TRUE)
+```
+```{r}
+us_states  %>% ggplot() + geom_col(aes(x=date,y=inc_cases)) +   labs(title="All Daily Case totals")
+
+us_states %>% filter(state=="Ohio") %>% ggplot() + geom_col(aes(x=date,y=inc_deaths)) +   labs(title="Ohio Daily Deaths totals")
+```
+```{r}
+us_daily %>% ggplot() + geom_col(aes(x=date,y=tc))
+```
