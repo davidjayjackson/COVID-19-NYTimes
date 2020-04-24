@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "Apr. 22, 2020 12:00 PM/EDT"
+date: "Apr. 24, 2020 12:05 AM/EDT"
 output: html_document
 ---
 
@@ -31,14 +31,16 @@ us_state_total <- us_states %>% group_by(state,date) %>%
 ```
 ```{r,echo=FALSE}
 us_counties <- data.table::fread("../COVID-19-NYTData/us-counties.csv")
-us_county_summary <- us_counties %>% group_by(state,county,date) %>% summarise(Cases=sum(cases),                                                        Deaths = sum(deaths),DeathRate = Deaths/Cases)
-
+us_county_summary <- us_counties %>% group_by(state,county,date) %>% summarise(Cases=sum(cases),Deaths = sum(deaths),DeathRate = Deaths/Cases)
 ```
 ```{r}
-shutdown <- read_ods("../COVID-19-uscovid19.org/us_shutdown.ods")
-shutdown$Shutdown <-lubridate::mdy(shutdown$Shutdown)
-shutdown$Delay <- shutdown$Shutdown - as.Date("2020-01-21")
+db <- dbConnect(SQLite(), dbname="../COVIDDB/CORVID.sqlite3")
+shutdown <- dbGetQuery(db, "SELECT * from shutdown;")
+
 ```
+
+
+
 ```{r}
 sd <- shutdown %>% ggplot() + geom_col(aes(x=Delay,y=reorder(State,Delay))) +
   labs(title="Elasped Days from First Confirmed Case(WA)",
