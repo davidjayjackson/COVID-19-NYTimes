@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "May 17, 2020 6:00 PM/EDT"
+date: "May 19, 2020 2:35 PM/EDT"
 output: html_document
 ---
 
@@ -155,6 +155,26 @@ oh4 <- ggplot(ohio_counties) + geom_col(aes(x=date,y=Deaths,fill=county)) +
   labs(title="Ohio/County Daily Deaths Summary by Date")
 ggplotly(oh4)
 ```
+```{r}
+statesSum <-us_states %>% group_by(state) %>% 
+  summarise(
+    tc = sum(cases),
+    td = sum(deaths)) 
+
+ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=tc,col=tc)) +
+   scale_x_continuous(labels = scales::comma) +
+  labs(title="Total Cases by States",subtitle="(As of May 18, 2020)",
+       x="Total Cases",y="US States")
+
+
+ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=td,col=td)) +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title="Total Deaths by States",subtitle="(As of May 18, 2020)",x="Total Deaths",y="US States")
+  
+```
+
+
+
 ```{r}
 dbDisconnect(db)
 ```
