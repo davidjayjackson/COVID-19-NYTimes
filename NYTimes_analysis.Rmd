@@ -57,10 +57,9 @@ dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
 us_counties$date <- as.character(us_counties$date)
 dbWriteTable(db, "us_counties",us_counties ,overwrite=TRUE)
 
-# dbDisconnect(db)
-
+USA <- data.table::fread("../COVID-19-NYTimes-data/us.csv")
+dbWriteTable(db, "USA",USA ,overwrite=TRUE)
 ```
-
 
 ```{r,echo=FALSE}
 STATESDAILY <-  us_states %>% 
@@ -172,9 +171,6 @@ ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=td,col=td)) +
   labs(title="Total Deaths by States",subtitle="(As of May 18, 2020)",x="Total Deaths",y="US States")
   
 ```
-
-
-
 ```{r}
 dbDisconnect(db)
 ```
