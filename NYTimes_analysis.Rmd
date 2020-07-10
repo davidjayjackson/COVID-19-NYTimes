@@ -50,7 +50,7 @@ ggplotly(sd)
 ```
 
 ```{r,echo=FALSE}
-db <- dbConnect(SQLite(), dbname="../COVIDDB/CORVID.sqlite3")
+db <- dbConnect(SQLite(), dbname="../COVIDDB/COVID.sqlite3")
 us_states$date <- as.character(us_states$date)
 dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
 
