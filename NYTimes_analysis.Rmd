@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "JuLY 8, 2020"
+date: "JuLY 10, 2020"
 output: html_document
 ---
 
@@ -14,7 +14,7 @@ library(plotly)
 library(readODS)
 ```
 
-## NY Times US States Data Analysis
+### NY Times US States Data Analysis
 * GitHub: https://github.com/nytimes/covid-19-data.git
 
 
@@ -34,7 +34,7 @@ us_counties <- data.table::fread("../COVID-19-NYTimes-data/us-counties.csv")
 us_county_summary <- us_counties %>% group_by(state,county,date) %>% summarise(Cases=sum(cases),Deaths = sum(deaths),DeathRate = Deaths/Cases)
 ```
 ```{r}
-db <- dbConnect(SQLite(), dbname="../COVIDDB/CORVID.sqlite3")
+db <- dbConnect(SQLite(), dbname="../COVIDDB/COVID.sqlite3")
 shutdown <- dbGetQuery(db, "SELECT * from shutdown;")
 
 ```
