@@ -57,7 +57,9 @@ dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
 us_counties$date <- as.character(us_counties$date)
 dbWriteTable(db, "us_counties",us_counties ,overwrite=TRUE)
 
+
 USA <- data.table::fread("../COVID-19-NYTimes-data/us.csv")
+USA$date <- as.character(USA$date)
 dbWriteTable(db, "USA",USA ,overwrite=TRUE)
 ```
 
