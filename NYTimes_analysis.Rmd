@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "July 25, 2020"
+date: "July 26, 2020"
 output: html_document
 ---
 
@@ -18,9 +18,16 @@ library(readODS)
 * GitHub: https://github.com/nytimes/covid-19-data.git
 
 
-```{r, echo=FALSE}
+
+```{r}
 rm(list=ls())
-us_states <- data.table::fread("../COVID-19-NYTimes-data//us-states.csv")
+USA <- data.table::fread("../DATA/us.csv")
+```
+
+
+```{r, echo=FALSE}
+
+us_states <- data.table::fread("../DATA/us-states.csv")
 
 us_total <- us_states %>% group_by(date) %>% 
 summarise(Cases=sum(cases), Deaths = sum(deaths),                                                                   DeathRate = Deaths/Cases)
@@ -30,7 +37,7 @@ us_state_total <- us_states %>% group_by(state,date) %>%
 
 ```
 ```{r,echo=FALSE}
-us_counties <- data.table::fread("../COVID-19-NYTimes-data/us-counties.csv")
+us_counties <- data.table::fread("../DATA/us-counties.csv")
 us_county_summary <- us_counties %>% group_by(state,county,date) %>% summarise(Cases=sum(cases),Deaths = sum(deaths),DeathRate = Deaths/Cases)
 ```
 ```{r}
@@ -57,10 +64,14 @@ dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
 us_counties$date <- as.character(us_counties$date)
 dbWriteTable(db, "us_counties",us_counties ,overwrite=TRUE)
 
-
-USA <- data.table::fread("../COVID-19-NYTimes-data/us.csv")
 USA$date <- as.character(USA$date)
 dbWriteTable(db, "USA",USA ,overwrite=TRUE)
+
+```
+```{r}
+us_states$date <- as.Date(us_states$date)
+us_counties$date <- as.Date(us_counties$date)
+USA$date <- as.Date(USA$date)
 ```
 
 ```{r,echo=FALSE}
