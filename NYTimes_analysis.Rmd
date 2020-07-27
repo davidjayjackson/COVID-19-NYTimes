@@ -188,3 +188,12 @@ ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=td,col=td)) +
 dbDisconnect(db)
 ```
 
+### States with Total Deaths greater than 100,000
+
+```{r}
+
+ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=td,col=td)) +
+  scale_x_continuous(labels = scales::comma) +
+  labs(title="Total Deaths by States",subtitle="(As of May 18, 2020)",x="Total Deaths",y="US States")
+```
+

@@ -1,7 +1,7 @@
 ---
 title: "Revised NYTime Update"
 author: "David J Jackson"
-date: "4/20/2020"
+date: "4/26,2020"
 output: html_document
 ---
 
@@ -18,15 +18,31 @@ library(plotly)
 
 ```{r, echo=FALSE}
 rm(list=ls())
-us_states <- data.table::fread("../COVID-19-NYTData/us-states.csv")
+us_states <- data.table::fread("../COVID-19-NYTime-Data/us-states.csv")
 us_states$date <- as.Date(us_states$date)
 
 
 ```
 ```{r,echo=FALSE}
-us_counties <- data.table::fread("../COVID-19-NYTData/us-counties.csv")
+us_counties <- data.table::fread("../COVID-19-NYTime-Data/us-counties.csv")
 us_counties$date <- as.Date(us_counties$date)
 
+```
+```{r,echo=FALSE}
+US <- data.table::fread("../COVID-19-NYTime-Data/us.csv")
+US$date <- as.Date(US$date)
+  
+```
+```{r,echo=FALSE}
+db <- dbConnect(SQLite(), dbname="../COVIDDB/CORVID.sqlite3")
+us_states$date <- as.character(us_states$date)
+dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
+
+us_counties$date <- as.character(us_counties$date)
+dbWriteTable(db, "us_counties",us_counties ,overwrite=TRUE)
+
+US$date <- as.character(US$date)
+dbWriteTable(db, "US",US ,overwrite=TRUE)
 ```
 
 ```{r}
@@ -47,14 +63,7 @@ us_counties <- us_counties %>% mutate(inc_deaths = deaths - lag(deaths))
 us_counties<- us_counties %>% mutate(inc_cases = cases - lag(cases))
 
 ```
-```{r,echo=FALSE}
-db <- dbConnect(SQLite(), dbname="../COVIDDB/CORVID.sqlite3")
-us_states$date <- as.character(us_states$date)
-dbWriteTable(db, "us_states",us_states ,overwrite=TRUE)
 
-us_counties$date <- as.character(us_counties$date)
-dbWriteTable(db, "us_counties",us_counties ,overwrite=TRUE)
-```
 ```{r}
 us_states  %>% ggplot() + geom_col(aes(x=date,y=inc_cases)) +   labs(title="All Daily Case totals")
 
