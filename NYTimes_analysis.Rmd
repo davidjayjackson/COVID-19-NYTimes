@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "July 31, 2020"
+date: "August 1, 2020"
 output: html_document
 ---
 
