@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "August 5, 2020"
+date: "August 7, 2020"
 output: html_document
 ---
 
@@ -175,13 +175,13 @@ statesSum <-us_states %>% group_by(state) %>%
 
 ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=tc,col=tc)) +
    scale_x_continuous(labels = scales::comma) +
-  labs(title="Total Cases by States",subtitle="(As of May 18, 2020)",
+  labs(title="Total Cases by States",subtitle="(As of August 7, 2020)",
        x="Total Cases",y="US States")
 
 
 ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=td,col=td)) +
   scale_x_continuous(labels = scales::comma) +
-  labs(title="Total Deaths by States",subtitle="(As of May 18, 2020)",x="Total Deaths",y="US States")
+  labs(title="Total Deaths by States",subtitle="(As of August 7, 2020)",x="Total Deaths",y="US States")
   
 ```
 ```{r}
@@ -194,6 +194,6 @@ dbDisconnect(db)
 
 ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=td,col=td)) +
   scale_x_continuous(labels = scales::comma) +
-  labs(title="Total Deaths by States",subtitle="(As of May 18, 2020)",x="Total Deaths",y="US States")
+  labs(title="Total Deaths by States",subtitle="(As of August 7, 2020)",x="Total Deaths",y="US States")
 ```
 
