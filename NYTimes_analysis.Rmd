@@ -1,7 +1,7 @@
 ---
 title: "NY Times US States COVID-19 Analysis"
 author: "David J Jackson"
-date: "August 11, 2020"
+date: "August 12, 2020"
 output: html_document
 ---
 
@@ -197,3 +197,16 @@ ggplot(statesSum) + geom_point(aes(x=tc,y=state,size=td,col=td)) +
   labs(title="Total Deaths by States",subtitle="(As of August 7, 2020)",x="Total Deaths",y="US States")
 ```
 
+### Calc and plot diff
+```{r}
+USA$Lag <- lag(USA$cases)
+USA$Diff <- USA$cases - USA$Lag
+plot(USA$date,USA$Diff,type="l", main="Plot of Differnce between between days.",ylab="Cases")
+grid()
+```
+```{r}
+USA$Lag <- lag(USA$deaths)
+USA$Diff <- USA$deaths- USA$Lag
+plot(USA$date,USA$Diff,type="l", main="Plot of Differnce between between days.",ylab="Deaths")
+grid()
+```
